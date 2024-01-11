@@ -39,21 +39,21 @@
         // the loop function runs over and over again forever
         void loop() {
           int i = 0;
-          for (i = 0; i < 1; i++) {           // blink the red LED for 3 counts
+          for (i = 0; i < 1; i++) {           // blink the red LED for 1 count
             digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
             delay(500);                       // wait for a second
             digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
             delay(500);                       // wait for a second
           }
         
-          for (i = 1; i < 2; i++) {          // blink the green LED for 3 counts
+          for (i = 1; i < 2; i++) {          // blink the green LED for 1 count
             digitalWrite(12, HIGH);          // turn the LED on (HIGH is the voltage level)
             delay(500);                      // wait for a second
             digitalWrite(12, LOW);           // turn the LED off by making the voltage LOW
             delay(500);                      // wait for a second
           }
         
-          for (i = 2; i < 3; i++) {          // blink the blue LED for 3 counts
+          for (i = 2; i < 3; i++) {          // blink the blue LED for 1 count
             digitalWrite(8, HIGH);           // turn the LED on (HIGH is the voltage level)
             delay(500);                      // wait for a second
             digitalWrite(8, LOW);            // turn the LED off by making the voltage LOW
@@ -89,7 +89,7 @@
         style="display:inline-block;"
         />
         <li>How many LEDs could you blink independently with your Arduino? How much current would that draw?</li>
-        <dd>- black hot drink</dd>
+        <dd>- 20 LEDs which is 1 LED per pin, it would draw 0.4 amperes.</dd>
         <li>How fast do you need to blink your LEDs until you no longer can tell that they are blinking?
         </li>
         <dd>- 10 milliseconds</dd>
