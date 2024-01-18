@@ -28,15 +28,14 @@
     <h2>Firmware!</h2>
     <div class="section2">
       <pre>
-        // the setup function runs once when you press reset or power the board
-        int led = 9;         // the PWM pin the LED is attached to
-        int brightness = 0;  // how bright the LED is
-        int fadeAmount = 5;  // how many points to fade the LED by
-        int buttonState = 0;  // variable for reading the pushbutton status
-
         // constants won't change. They're used here to set pin numbers:
-        const int buttonPin = 12;  // the number of the pushbutton pin
-        const int ledGreen = 13;    // the number of the LED pin
+        const int led = 9;          // the PWM pin the red LED is attached to
+        const int buttonPin = 12;   // the number of the green pushbutton pin
+        const int buttonRed = 7;    // the number of the red pushbutton pin
+        const int ledGreen = 13;    // the number of the green LED pin
+
+        int buttonState = 0;        // variable for reading the pushbutton status
+        int buttonStateRed = 0;     // variable for reading the pushbutton status
 
         // the setup routine runs once when you press reset:
         void setup() {
@@ -50,21 +49,10 @@
 
         // the loop routine runs over and over again forever:
         void loop() {
-          // set the brightness of pin 9:
-          analogWrite(led, brightness);
-
-          // change the brightness for next time through the loop:
-          brightness = brightness + fadeAmount;
-
-          // reverse the direction of the fading at the ends of the fade:
-          if (brightness <= 0 || brightness >= 255) {
-            fadeAmount = -fadeAmount;
-          }
-          // wait for 30 milliseconds to see the dimming effect
-          delay(30);
-
+          // GREEN LED
           // read the state of the pushbutton value:
           buttonState = digitalRead(buttonPin);
+          buttonStateRed = digitalRead(buttonRed);
 
           // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
           if (buttonState == HIGH) {
@@ -73,6 +61,31 @@
           } else {
             // turn LED off:
             digitalWrite(ledGreen, LOW);
+          }
+
+          //RED LED
+          // checks to see if the button has been pressed, represented by a "HIGH"
+          if (buttonStateRed == HIGH) {
+            // turn red LED on
+            digitalWrite(led, HIGH);
+
+            // fade LED pins in
+            for (int colorFadeValue = 0; colorFadeValue <= 255; colorFadeValue +=10) {
+            // fade red LED from 0 to 255 by increasing by 10
+            analogWrite(led,colorFadeValue);
+            //delay time by 30 ms
+            delay(30);
+            }
+            // fade LED pins out
+            for (int colorFadeValue = 255; colorFadeValue >= 0; colorFadeValue -=10) {
+            // fade red LED from 255 to 0 by decreasing by 10
+            analogWrite(led,colorFadeValue);
+            // delay time by 30 ms
+            delay(30);
+            }
+          } else {
+            // turn red LED off
+            digitalWrite(led, LOW);
           }
         }
       </pre>
