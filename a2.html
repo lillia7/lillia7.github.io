@@ -4,15 +4,107 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
 
-    <title>Example Student's HCDE 439 Physical Computing Page!</title>
+    <title>A2: Fade!</title>
 
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <h1>Example Student's Assignment 2!</h1>
-    <div class="header">
-      <img src="red-panda.jpg" />
-      <p>Here is all the documentation for assignment 2!</p>
+    <h1>Assignment 1: Blink!</h1>
+    <div class="header" style="text-align: center;">
+      <img src="switches.png" class="center"/>
+    </div>
+    <br>
+    <h2>Schematics & Calculations!</h2>
+    <div class="section1">
+      <img src="A1_schematic.jpg" 
+        width="540" 
+        height="640"
+      />
+      <p>The schematic used to create the LED circuit. Calculations used to find
+        the correct resistors to use for each LED color. 
+      </p>
+    </div>
+    <br>
+    <h2>Firmware!</h2>
+    <div class="section2">
+      <pre>
+        // the setup function runs once when you press reset or power the board
+        int led = 9;         // the PWM pin the LED is attached to
+        int brightness = 0;  // how bright the LED is
+        int fadeAmount = 5;  // how many points to fade the LED by
+        int buttonState = 0;  // variable for reading the pushbutton status
+
+        // constants won't change. They're used here to set pin numbers:
+        const int buttonPin = 12;  // the number of the pushbutton pin
+        const int ledGreen = 13;    // the number of the LED pin
+
+        // the setup routine runs once when you press reset:
+        void setup() {
+          // declare pin 9 to be an output:
+          pinMode(led, OUTPUT);
+          // initialize the LED pin as an output:
+          pinMode(ledGreen, OUTPUT);
+          // initialize the pushbutton pin as an input:
+          pinMode(buttonPin, INPUT);
+        }
+
+        // the loop routine runs over and over again forever:
+        void loop() {
+          // set the brightness of pin 9:
+          analogWrite(led, brightness);
+
+          // change the brightness for next time through the loop:
+          brightness = brightness + fadeAmount;
+
+          // reverse the direction of the fading at the ends of the fade:
+          if (brightness <= 0 || brightness >= 255) {
+            fadeAmount = -fadeAmount;
+          }
+          // wait for 30 milliseconds to see the dimming effect
+          delay(30);
+
+          // read the state of the pushbutton value:
+          buttonState = digitalRead(buttonPin);
+
+          // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
+          if (buttonState == HIGH) {
+            // turn LED on:
+            digitalWrite(ledGreen, HIGH);
+          } else {
+            // turn LED off:
+            digitalWrite(ledGreen, LOW);
+          }
+        }
+      </pre>
+    </div>
+    <br>
+    <h2>Circuits!</h2>
+    <div class="section3">
+      <img src="fade-pic.JPG" 
+        width="360" 
+        height="480"
+        style="display:inline-block;"
+      />
+      <img src="fade-gif.gif" width="270" height="426" allowFullScreen  style="display:inline-block;"></img>
+      <p>Here is the finished working product! In the picture and GIF above, there are 2 LEDs (red and green)
+        using different resistors according to the calculations above. Each LED blinks or fades independently 
+        and is powered by two different buttons. 
+      </p>
+    </div>
+    <br>
+    <h2>Questions!</h2>
+    <div class="section4">
+      <ol> 
+        <li>Draw a graph where the X axis is time and the Y axis is voltage across the LEDs. Draw a line for each of your 3 LEDs.</li>
+        <img src="A1_ledgraph.jpg"/>
+        <br>
+        <li>How many LEDs could you blink independently with your Arduino? How much current would that draw?</li>
+        <dd>- 20 LEDs which is 1 LED per pin, with the current per pin being 20mA and there being 20 LEDs, it would draw about 0.4 amperes.</dd>
+        <br>
+        <li>How fast do you need to blink your LEDs until you no longer can tell that they are blinking?
+        </li>
+        <dd>- 10 milliseconds</dd>
+      </ol>
     </div>
   </body>
 </html>
