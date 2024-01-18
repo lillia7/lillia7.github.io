@@ -70,19 +70,21 @@
             digitalWrite(led, HIGH);
 
             // fade LED pins in
-            for (int colorFadeValue = 0; colorFadeValue <= 255; colorFadeValue +=10) {
-            // fade red LED from 0 to 255 by increasing by 10
-            analogWrite(led,colorFadeValue);
+            for (int brightness = 0; brightness <= 255; brightness++) {
+            // fade red LED from 0 to 255 by increasing brightness
+            analogWrite(led,brightness);
             //delay time by 30 ms
             delay(30);
             }
+
             // fade LED pins out
-            for (int colorFadeValue = 255; colorFadeValue >= 0; colorFadeValue -=10) {
-            // fade red LED from 255 to 0 by decreasing by 10
-            analogWrite(led,colorFadeValue);
+            for (int brightness = 255; brightness >= 0; brightness--) {
+            // fade red LED from 255 to 0 by decreasing brightness
+            analogWrite(led,brightness);
             // delay time by 30 ms
             delay(30);
             }
+            
           } else {
             // turn red LED off
             digitalWrite(led, LOW);
