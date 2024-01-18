@@ -73,16 +73,16 @@
             for (int brightness = 0; brightness <= 255; brightness++) {
             // fade red LED from 0 to 255 by increasing brightness
             analogWrite(led,brightness);
-            //delay time by 30 ms
-            delay(30);
+            //delay time by 5 ms
+            delay(5);
             }
 
             // fade LED pins out
             for (int brightness = 255; brightness >= 0; brightness--) {
             // fade red LED from 255 to 0 by decreasing brightness
             analogWrite(led,brightness);
-            // delay time by 30 ms
-            delay(30);
+            // delay time by 5 ms
+            delay(5);
             }
             
           } else {
