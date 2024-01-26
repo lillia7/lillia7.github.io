@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+    <title>A3: Input Output!</title>
+
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>Assignment 2: Fade!</h1>
+    <div class="header" style="text-align: center;">
+      <img src="sun.png" class="center"/>
+    </div>
+    <br>
+    <h2>Schematics & Calculations!</h2>
+    <div class="section1">
+      <img src="A3_schem3.jpg" 
+        width="650" 
+        height="480"
+        style="display:inline-block;"
+      />
+      <img src="A3_Calc.jpg" 
+        width="559" 
+        height="480"
+        style="display:inline-block;"
+      />
+      <p>The schematic used to create the LED circuit. Calculations used to find
+        the correct resistors to use for each LED color and photoresistor. A 220 ohm resistor is used
+        on the photoresistor because this resistors is used to ground both red and blue LEDs. An additional
+        10 ohm resistor is used on the RGB red LED to ground the LED and allow for more light from the blue LED.
+        The calculations above also show the potential values at the voltage divider based on a bright room or dark room.
+      </p>
+    </div>
+    <br>
+    <h2>Firmware!</h2>
+    <div class="section2">
+      <pre>
+        //defining initial sensor value as 0
+        int sensorValue = 0;
+        //defining initial output as 0
+        int output = 0;
+
+        //setup function
+        void setup() {
+            //setup serial
+            Serial.begin(9600);
+        }
+
+        //loop function
+        void loop() {
+            //reading and storing sensor value
+            sensorValue = analogRead(A0);
+            //converting sensor value range to detect light levels depending on environment
+            output = map(sensorValue, 75, 150, 0, 255);
+            //constraining output to be between 0 and 255
+            output = constrain(output, 0, 255);
+
+            //if else statement for turning on either the purple or red LED
+            if(output > 100){
+                //if the photoresistor is receiving the least amount of light (75) the red LED is on
+                analogWrite(9, 100);
+                //red LED is off
+                analogWrite(10, 0);
+            }
+            //else statement for purple LED
+            else {
+                //if the photoresistor is not receiving at least amount of light the purple LED is on
+                analogWrite(10, 100);
+                //purple LED is off
+                analogWrite(9, 0);
+            }
+
+            //serial print statement for text
+            Serial.print("LED= ");
+            //for the output variable value
+            Serial.println(output);
+
+            //delay 30ms to see sensor and light effect
+            delay(30);
+        }
+      </pre>
+    </div>
+    <br>
+    <h2>Circuits!</h2>
+    <div class="section3">
+      <img src="A3_ciruit.JPG" 
+        width="415" 
+        height="480"
+        style="display:inline-block;"
+      />
+      <img src="A3_gif.gif" width="323" height="480" allowFullScreen  style="display:inline-block;"></img>
+      <p>Here is the finished working product! In the picture and GIF above, there are 2 LEDs (red and purple)
+        using a 220 ohm resistor and a photoresistor. Each LED blinks depending on the light in the environment. 
+        In this case, when it is at a normal light level (room light) the red LED is on. When there is an excessive
+        amount of light, the purple LED turns on. 
+      </p>
+    </div>
+    <br>
+    <h2>Questions!</h2>
+    <div class="section4">
+      <ol> 
+        <li>In your voltage divider, can the variable resistor be either R1 or R2 or does it need to be one or the other? Justify your answer with example calculations.</li>
+        <img src="A3_Q1.jpg"/>
+        <p>As you can see, in both scenarios, the voltage at the output varies with the resistance of the variable resistor (photoresistor),
+            and the circuit functions as a voltage divider. The choice of which resistor is variable depends on the desired behavior and the 
+            physical characteristics of the components used.
+        </p>
+        <br>
+        <li>Draw a graph where the x-axis is time and the y-axis is voltage. Plot the voltage at V-measure of your voltage divider of your shared gif.</li>
+        <img src="A2_Q3.jpg"/>
+        <br>
+        <li>AnalogWrite and analogRead are respectively 8-bit and 10-bit values. Imagine you had 10-bit PWM and a 16-bit analog-to-digital converter instead. How would this change your map() code? Explain your answer.</li>
+        <dd>- If you had a 10-bit PWM resolution and a 16-bit analog-to-digital converter (ADC) instead of the standard 8-bit and 10-bit, respectively, 
+            you would need to adjust the parameters used in the map() function in your code.
+
+            The standard map() function in Arduino for a 10-bit ADC and an 8-bit PWM is as follows:
+            <pre>
+                output = map(sensorValue, 0, 1023, 0, 255);
+            </pre>
+            In this code, sensorValue is assumed to be in the range of 0 to 1023 (10-bit ADC), and the desired output range is 0 to 255 (8-bit PWM).
+
+            If you had a 16-bit ADC and a 10-bit PWM, you would adjust the map() function like this:
+            <pre>
+                output = map(sensorValue, 0, 65535, 0, 1023);
+            </pre>
+            Here, the range for sensorValue is now 0 to 65535 (16-bit ADC), and the desired output range is 0 to 1023 (10-bit PWM).
+
+            In summary, to adapt the map() function to different bit resolutions, you need to update the upper bounds of the current range 
+            (1023 or 255) based on the number of bits in your ADC or PWM.    
+        </dd>
+      </ol>
+    </div>
+  </body>
+</html>

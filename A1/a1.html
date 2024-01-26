@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+    <title>A1: Blink!</title>
+
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>Assignment 1: Blink!</h1>
+    <div class="header" style="text-align: center;">
+      <img src="Lightbulb.png" class="center"/>
+    </div>
+    <br>
+    <h2>Schematics & Calculations!</h2>
+    <div class="section1">
+      <img src="A1_schematic.jpg" 
+        width="540" 
+        height="640"
+      />
+      <p>The schematic used to create the LED circuit. Calculations used to find
+        the correct resistors to use for each LED color. 
+      </p>
+    </div>
+    <br>
+    <h2>Firmware!</h2>
+    <div class="section2">
+      <pre>
+        // the setup function runs once when you press reset or power the board
+        void setup() {
+          // initialize digital pin LED_BUILTIN as an output.
+          pinMode(LED_BUILTIN, OUTPUT);     // initialize pin 13 output
+          pinMode(12, OUTPUT);              // initialize pin 12 output
+          pinMode(8, OUTPUT);               // initialize pin 8 output
+        }
+
+        // the loop function runs over and over again forever
+        void loop() {
+          int i = 0;
+          for (i = 0; i < 1; i++) {           // blink the red LED for 1 count
+            digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
+            delay(500);                       // wait for a second
+            digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
+            delay(500);                       // wait for a second
+          }
+        
+          for (i = 1; i < 2; i++) {          // blink the green LED for 1 count
+            digitalWrite(12, HIGH);          // turn the LED on (HIGH is the voltage level)
+            delay(500);                      // wait for a second
+            digitalWrite(12, LOW);           // turn the LED off by making the voltage LOW
+            delay(500);                      // wait for a second
+          }
+        
+          for (i = 2; i < 3; i++) {          // blink the blue LED for 1 count
+            digitalWrite(8, HIGH);           // turn the LED on (HIGH is the voltage level)
+            delay(500);                      // wait for a second
+            digitalWrite(8, LOW);            // turn the LED off by making the voltage LOW
+            delay(500);                      // wait for a second
+          }
+
+          i = 0;                            // reset the counter to restart the blinking loop
+        } 
+      </pre>
+    </div>
+    <br>
+    <h2>Circuits!</h2>
+    <div class="section3">
+      <img src="A1_circuit.jpg" 
+        width="360" 
+        height="426"
+        style="display:inline-block;"
+      />
+      <img src="circuitgif.gif" width="270" height="426" allowFullScreen  style="display:inline-block;"></img>
+      <p>Here is the finished working product! In the picture and GIF above, there are 3 LEDs (red, green, and blue)
+        using different resistors according to the calculations above. Each LED blinks independently and loops through all 
+        the colors. 
+      </p>
+    </div>
+    <br>
+    <h2>Questions!</h2>
+    <div class="section4">
+      <ol> 
+        <li>Draw a graph where the X axis is time and the Y axis is voltage across the LEDs. Draw a line for each of your 3 LEDs.</li>
+        <img src="A1_ledgraph.jpg"/>
+        <br>
+        <li>How many LEDs could you blink independently with your Arduino? How much current would that draw?</li>
+        <dd>- 20 LEDs which is 1 LED per pin, with the current per pin being 20mA and there being 20 LEDs, it would draw about 0.4 amperes.</dd>
+        <br>
+        <li>How fast do you need to blink your LEDs until you no longer can tell that they are blinking?
+        </li>
+        <dd>- 10 milliseconds</dd>
+      </ol>
+    </div>
+  </body>
+</html>
