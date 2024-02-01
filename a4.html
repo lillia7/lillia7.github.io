@@ -17,11 +17,11 @@
     <h2>Schematics & Calculations!</h2>
     <div class="section1">
       <img src="A3_scheme.jpg" 
-        width="488" 
+        width="410" 
         height="360"
         style="display:inline-block;"
       />
-      <p>The schematic used to create the Servo Motor circuit. 
+      <p>The schematic used to create the Servo Motor and Capacitive Sensor circuit. 
       </p>
     </div>
     <br>
@@ -84,20 +84,85 @@
     <h2>Questions!</h2>
     <div class="section4">
       <ol> 
-        <li>Say you are using a servo motor you attach to pin 9.Draw a graph with the X axis in seconds, for two seconds, and the y-axis the voltage at pin 9 with respect to ground. </li>
-        <img src="A3_Q1.jpg"/>
-        <p>As you can see, in both scenarios, the voltage at the output varies with the resistance of the variable resistor (photoresistor),
-            and the circuit functions as a voltage divider. The choice of which resistor is variable depends on the desired behavior and the 
-            physical characteristics of the components used. With that being said, the variable resistor could be either R1 or R2 (backed by calculations).
-        </p>
+        <li>Say you are using a servo motor you attach to pin 9. Draw a graph with the X axis in seconds, for two seconds, and the y-axis the voltage at pin 9 with respect to ground. </li>
+        <img src="A4_Q1.jpg"/>
         <br>
         <li> Your input device is slightly broken, leading it to give us an erroneous reading 1% of the time. How can we address this? Answer in (pseudo)code.</li>
-        <img src="A3_Q2.jpg"/>
+        <pre>
+            #define CAPACITIVE_PIN 2
+            #define SERVO_PIN 9
+
+            void setup() {
+                // Initialize your setup here
+                // e.g., attach the servo to its pin
+            }
+
+            void loop() {
+                int capacitiveValue = readCapacitiveSensor();
+                
+                // Check for erroneous reading
+                if (random(0, 100) < 1) {
+                    // Handle erroneous reading
+                    handleErroneousReading();
+                } else {
+                    // Process the valid reading
+                    int servoAngle = map(capacitiveValue, 0, 1023, 0, 180);
+                    moveServo(servoAngle);
+
+                    // Additional processing if needed
+                }
+
+                delay(100);
+            }
+            void handleErroneousReading() {
+                // Implement your strategy for handling erroneous readings
+                // For example, ignore the reading or use the previous valid reading
+            }
+        </pre>
         <br>
         <li>Your input device is slightly noisy, leading the measurement to randomly deviate from the true measurement up or down by 10%. How can we address this? Answer in (pseudo)code.</li>
-        <dd>- If you had a 10-bit PWM resolution and a 16-bit analog-to-digital converter (ADC) instead of the standard 8-bit and 10-bit, respectively, 
-            you would need to adjust the parameters used in the map() function in your code.   
-        </dd>
+        <pre>
+            #define CAPACITIVE_PIN 2
+            #define SERVO_PIN 9
+            #define FILTER_FACTOR 0.9  // Adjust this factor based on the level of filtering needed
+
+            int previousReading = 0;
+
+            void setup() {
+                // Initialize your setup here
+                // e.g., attach the servo to its pin
+            }
+
+            void loop() {
+                int rawCapacitiveValue = readCapacitiveSensor();
+                int filteredCapacitiveValue = filterReading(rawCapacitiveValue);
+
+                int servoAngle = map(filteredCapacitiveValue, 0, 1023, 0, 180);
+                moveServo(servoAngle);
+
+                // Additional processing if needed
+
+                delay(100);
+            }
+
+            int readCapacitiveSensor() {
+                // Implement your capacitive sensor reading logic here
+                // e.g., using the CapacitiveSensor library
+            }
+
+            int filterReading(int rawReading) {
+                // Use a simple exponential moving average filter
+                int filteredReading = FILTER_FACTOR * previousReading + (1 - FILTER_FACTOR) * rawReading;
+                previousReading = filteredReading;
+
+                return filteredReading;
+            }
+
+            void moveServo(int angle) {
+                // Move the servo to the specified angle
+                // Implement your servo control logic here
+            }
+        </pre>
       </ol>
     </div>
   </body>
