@@ -92,43 +92,50 @@
         <br>
         <li> Your input device is slightly broken, leading it to give us an erroneous reading 1% of the time. How can we address this? Answer in (pseudo)code.</li>
         <pre>
+            // Define constants for pin numbers
             #define CAPACITIVE_PIN 2
             #define SERVO_PIN 9
 
+            // Setup function is called once at the beginning of the program
             void setup() {
                 // Initialize your setup here
                 // e.g., attach the servo to its pin
             }
 
+            // Loop function is called repeatedly in a loop
             void loop() {
-                int capacitiveValue = readCapacitiveSensor();
+                // Read a value from the capacitive sensor
+                int sensorReading = readCapacitiveSensor();
                 
-                // Check for erroneous reading
+                // Check for an erroneous reading (simulated with a 1% chance)
                 if (random(0, 100) < 1) {
                     // Handle erroneous reading
                     handleErroneousReading();
                 } else {
                     // Process the valid reading
-                    int servoAngle = map(capacitiveValue, 0, 1023, 0, 180);
+                    int servoAngle = map(sensorReading, 0, 1023, 0, 180);
                     moveServo(servoAngle);
-
-                    // Additional processing if needed
                 }
 
+                // Introduce a delay to control the loop speed
                 delay(100);
             }
+
+            // Function to handle erroneous readings
             void handleErroneousReading() {
-                // Implement your strategy for handling erroneous readings
+                // Implement strategy for handling erroneous readings
                 // For example, ignore the reading or use the previous valid reading
             }
         </pre>
         <br>
         <li>Your input device is slightly noisy, leading the measurement to randomly deviate from the true measurement up or down by 10%. How can we address this? Answer in (pseudo)code.</li>
         <pre>
+            // Define constants for pin numbers and filter factor
             #define CAPACITIVE_PIN 2
             #define SERVO_PIN 9
             #define FILTER_FACTOR 0.9  // Adjust this factor based on the level of filtering needed
 
+            // Variable to store the previous capacitive sensor reading
             int previousReading = 0;
 
             void setup() {
@@ -137,33 +144,40 @@
             }
 
             void loop() {
+                // Read the raw capacitive sensor value
                 int rawCapacitiveValue = readCapacitiveSensor();
+                
+                // Apply the filtering function to smooth out noise
                 int filteredCapacitiveValue = filterReading(rawCapacitiveValue);
 
+                // Map the filtered value to a servo angle range (0-180)
                 int servoAngle = map(filteredCapacitiveValue, 0, 1023, 0, 180);
+
+                // Move the servo to the calculated angle
                 moveServo(servoAngle);
 
                 // Additional processing if needed
 
+                // Introduce a delay to control the loop speed
                 delay(100);
             }
 
+            // Function to read the raw value from the capacitive sensor
             int readCapacitiveSensor() {
                 // Implement your capacitive sensor reading logic here
                 // e.g., using the CapacitiveSensor library
             }
 
+            // Function to apply a simple filter
             int filterReading(int rawReading) {
-                // Use a simple exponential moving average filter
+                // Calculate the filtered reading using the exponential moving average formula
                 int filteredReading = FILTER_FACTOR * previousReading + (1 - FILTER_FACTOR) * rawReading;
+                
+                // Update the previous reading for the next iteration
                 previousReading = filteredReading;
 
+                // Return the filtered reading
                 return filteredReading;
-            }
-
-            void moveServo(int angle) {
-                // Move the servo to the specified angle
-                // Implement your servo control logic here
             }
         </pre>
       </ol>
