@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+    <title>Assignment 5: High(er) Voltage and Transistors!</title>
+
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>Assignment 5: High(er) Voltage and Transistors!</h1>
+    <div class="header" style="text-align: center;">
+      <img src="A5_light.png" class="center"/>
+    </div>
+    <br>
+    <h2>Schematics & Calculations!</h2>
+    <div class="section1">
+      <img src="A5_scheme.jpg" 
+        width="500" 
+        height="360"
+        style="display:inline-block;"
+      />
+      <p>The schematic used to create the IR Remote and DC Motor circuit. 
+        Using a 9V/18W external power source to power the motor with a N-MOSFET transistor to control the motor. 
+        The N-MOSFET transistor is connected to pin 9. With a 9V and 18W power source the current is 2A (P=VI). 
+        This is the voltage/current that is expected to be found in the load of the circuit.
+      </p>
+    </div>
+    <br>
+    <h2>Firmware!</h2>
+    <div class="section2">
+      <pre>
+        #include <IRremote.h> // uploading IR library
+
+        // establishing IR receiver pin
+        int IR_RECEIVE_PIN = 2;
+        // decoding IR signals
+        decode_results results;
+        // establishing DC motor pin
+        int motorPin = 9;
+        // setting the initial speed of the DC motor
+        int speed = 0;
+            
+        void setup(){
+            // used to see what signals the IR receiver is getting
+            Serial.begin(9600);
+            // IR receiver initializing:
+            IrReceiver.begin(IR_RECEIVE_PIN); 
+            Serial.println(IR_RECEIVE_PIN);
+            // setting motor as the output
+            pinMode(motorPin, OUTPUT);
+        }
+            
+        void loop(){
+            // prints the speed to the serial
+            Serial.println(speed);
+            // starts the DC motor, updates the speed
+            analogWrite(motorPin, speed);
+            if (IrReceiver.decode()) {
+                // if user pressed power button
+                if (IrReceiver.decodedIRData.command == 0x45) {
+                  // check to see if the motor is already going max speed
+                  if(speed == 0) {
+                    // sets speed back to 255
+                    speed = 255;
+                    // sends speed to motor
+                    analogWrite(motorPin, speed);
+                    // enable receiving of the next value
+                    IrReceiver.resume();
+                  } else {
+                    // sets speed back to 0
+                    analogWrite(motorPin, 0);
+                    // enable receiving of the next value
+                    IrReceiver.resume();
+                  }
+                } 
+            }
+            // delay to not overwhelm serial
+            delay(10);
+        }  
+      </pre>
+    </div>
+    <br>
+    <h2>Circuits!</h2>
+    <div class="section3">
+      <img src="A5_circuit.JPG" 
+        width="480" 
+        height="360"
+        style="display:inline-block;"
+      />
+      <img src="A5_gif.gif" width="640" height="360" allowFullScreen  style="display:inline-block;"></img>
+      <p>Here is the finished working product! In the picture and GIF above, there is a transistor connected to a DC motor.
+        The DC Motor spins when the IR Remote power button is pressed.
+      </p>
+    </div>
+    <br>
+    <h2>Questions!</h2>
+    <div class="section4">
+      <ol> 
+        <li>What is the absolute maximum amount of current between pins 2 and 3? </li>
+        <p>
+            37 Amps
+        </p>
+        <br>
+        <li> Draw a schematic for a circuit with using at least your arduino, a DC motor, a flyback diode, and capacitors between power and ground. 
+             Find parts with datasheets you could use for each of these schematic components.
+        </li>
+        <img src="A5_q2.jpg">
+        <br>
+        <li>Draw a schematic using at least your arduino, this chip, and two motors. 
+            Write (pseudo) code that shows how you would move the motors both forward, both back, then one forward one back, and one back then forward.
+        </li>
+        <img src="A5_q3.jpg">
+        <pre>
+            // Initialize pins
+            int motor1Pin1 = 2; // Arduino pin connected to Input 1 of L293D
+            int motor1Pin2 = 3; // Arduino pin connected to Input 2 of L293D
+            int motor2Pin1 = 4; // Arduino pin connected to Input 3 of L293D
+            int motor2Pin2 = 5; // Arduino pin connected to Input 4 of L293D
+
+            void setup() {
+                // Setup motor control pins as outputs
+                pinMode(motor1Pin1, OUTPUT);
+                pinMode(motor1Pin2, OUTPUT);
+                pinMode(motor2Pin1, OUTPUT);
+                pinMode(motor2Pin2, OUTPUT);
+            }
+
+            void loop() {
+                // Move both motors forward
+                moveForward();
+                delay(1000); // 1 second delay
+
+                // Move both motors backward
+                moveBackward();
+                delay(1000); // 1 second delay
+
+                // Move one motor forward and the other backward
+                moveOneForwardOneBackward();
+                delay(1000); // 1 second delay
+
+                // Move one motor backward and the other forward
+                moveOneBackwardOneForward();
+                delay(1000); // 1 second delay
+            }
+
+            // Function to move both motors forward
+            void moveForward() {
+                digitalWrite(motor1Pin1, HIGH);
+                digitalWrite(motor1Pin2, LOW);
+                digitalWrite(motor2Pin1, HIGH);
+                digitalWrite(motor2Pin2, LOW);
+            }
+
+            // Function to move both motors backward
+            void moveBackward() {
+                digitalWrite(motor1Pin1, LOW);
+                digitalWrite(motor1Pin2, HIGH);
+                digitalWrite(motor2Pin1, LOW);
+                digitalWrite(motor2Pin2, HIGH);
+            }
+
+            // Function to move one motor forward and the other backward
+            void moveOneForwardOneBackward() {
+                digitalWrite(motor1Pin1, HIGH);
+                digitalWrite(motor1Pin2, LOW);
+                digitalWrite(motor2Pin1, LOW);
+                digitalWrite(motor2Pin2, HIGH);
+            }
+
+            // Function to move one motor backward and the other forward
+            void moveOneBackwardOneForward() {
+                digitalWrite(motor1Pin1, LOW);
+                digitalWrite(motor1Pin2, HIGH);
+                digitalWrite(motor2Pin1, HIGH);
+                digitalWrite(motor2Pin2, LOW);
+            }
+        </pre>
+      </ol>
+    </div>
+  </body>
+</html>
