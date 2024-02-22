@@ -182,8 +182,10 @@
       />
       <img src="A6_gif.gif" width="331" height="360" allowFullScreen  style="display:inline-block;"></img>
       <p>Here is the finished working product! In the picture and GIF above, there is a button and tilt sensor connectde to the Arduino and web.
-        The circles and colors on the screen go away when the tilt sensor is tilted and when the button is pressed.
-        When you press the space bar on the keyboard, the red LED on the breadboard turns on.
+        The circles and colors on the screen go away when the tilt sensor is tilted and when the button is pressed. This is because
+        analogRead() gets values from the button and tilt sensors. At the default state (not pressed or tilted), both the analog pins are getting around the max value (1023), 
+        when the button is pressed or the tilt sensor is tilted (circuit is grounded/disconnected), the value drops down to nearly 0. By using these values in the code, I am able to 
+        get the web to react and change the display based on the change in values. When you press the space bar on the keyboard, the red LED on the breadboard turns on.
       </p>
     </div>
     <br>
