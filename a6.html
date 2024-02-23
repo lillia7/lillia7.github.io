@@ -58,8 +58,8 @@
       </pre>
       <p>JavaScript Code: </p>
       <pre>
-        const BAUD_RATE = 9600; // This should match the baud rate in your Arduino sketch
-        let port, connectBtn, circleDiameter; // Declare global variables
+        const BAUD_RATE = 9600; // match the baud rate in arduino sketch
+        let port, connectBtn, circleDiameter; // declare global variables
 
         function setup() {
             setupSerial(); // Run serial setup function
@@ -69,6 +69,29 @@
             circleDiameter = min(windowWidth, windowHeight) * 0.5;
             // Set the canvas blend mode
             blendMode(DODGE);
+        }
+
+        // helper function for managing the serial connection
+        function setupSerial() {
+            port = createSerial();
+
+            // check to see if there are any ports we have used previously
+            let usedPorts = usedSerialPorts();
+            if (usedPorts.length > 0) {
+                // if there are ports used, open the first one
+                port.open(usedPorts[0], BAUD_RATE);
+            }
+        }
+
+        //function to check if keys on keyboard were used
+        function keyPressed() {
+            if (key == ' ') {
+                // if the space bar is pressed
+                port.write('1'); // send '1' to the Arduino
+                //if the o key was pressed
+            } else if (key == 'o') {
+                port.write('2'); // send '2' to the Arduino
+            }
         }
 
         function draw() {
@@ -95,28 +118,6 @@
             circle(0, circleDiameter / 2, circleDiameter);
         }
 
-        // helper function for managing the serial connection
-        function setupSerial() {
-            port = createSerial();
-
-            // check to see if there are any ports we have used previously
-            let usedPorts = usedSerialPorts();
-            if (usedPorts.length > 0) {
-                // if there are ports used, open the first one
-                port.open(usedPorts[0], BAUD_RATE);
-            }
-        }
-
-        //function to check if keys on keyboard were used
-        function keyPressed() {
-            if (key == ' ') {
-                // if the space bar is pressed
-                port.write('1'); // send '1' to the Arduino
-                //if the o key was pressed
-            } else if (key == 'o') {
-                port.write('2'); // send '2' to the Arduino
-            }
-        }
       </pre>
       <p>Code inspired by HCDE 439: https://github.com/machineagency/hcde439 </p>
     </div>
