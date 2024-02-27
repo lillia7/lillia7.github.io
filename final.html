@@ -245,7 +245,7 @@
                         // fade the LED using the calibrated value
                         if (photo < sensorMin) {
                             analogWrite(led, 255); // turns LED strip on 
-                        // if the value is less than 500 (the number is calculated based on serial count of light in room)
+                        // if the value is more than sensor mininmum (calculated based on serial count of light in room)
                         } else {
                             analogWrite(led, 0); // turns LED strip off.
                         }
