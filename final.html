@@ -17,6 +17,7 @@
             <img src="final_sketch.jpg"
             height="360"
             width="368">
+            <br>
             <p>
                 To keep away from bad eyesight and grinding those games at night! 
                 An LED strip that automatically turns on when it's dark and controlled with a remote.
@@ -91,6 +92,7 @@
                 Using a transistor connected to pin 6 (which allows control of the LED strip via computer and code) as the output.
                 I connected all of the components to on a breadboard (pictured below), and began coding via Arduino.
             </p>
+            <br>
             <img src="final_scheme.jpg"
             height="300"
             width="587"
@@ -99,6 +101,7 @@
             height="300"
             width="400"
             style="display:inline-block;">
+            <br>
             <p>
                 Using a 10k resistor for the photoresistor because a voltage divider is needed to make the voltage drop measurable so that the amount of light the photoresistor receives can be determined. 
                 The current used by the LED strip (8.75 A) is less than the max current that the transistor can handle (32A), indicating that the transistor is not being pushed to its maximum capacity which makes it reliable to use with the LED strip.
@@ -113,6 +116,7 @@
                 values and turn the LED strip on and off accordingly. Another issue I ran into was using the IR remote, due to the remote buttons having unique codes and the library updating the commands to these codes, I couldn't find
                 the command codes for the buttons I wanted to use. To solve this issue, I used a simple code from Circuit Tutorials on IR remotes that read each button input and tranlated each button into a command code to use and call in my own code.
             </p>
+            <br>
             <pre>
                 #include <IRremote.hpp>
 
