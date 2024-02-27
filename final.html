@@ -11,8 +11,238 @@
         <div>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/ImEo-qmyyE4?si=TU9M7FTy5Zfd6O5r" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
         </div>
-        <div class="header" style="text-align: center;">
-            <img src="final_proposal.jpg"/>
+        <br>
+        <div>
+            <h2>Concept!</h2>
+            <img src="final_sketch.jpg"
+            height="360"
+            width="368">
+            <p>
+                To keep away from bad eyesight and grinding those games at night! An LED strip that automatically turns on when it's dark and controlled with a remote.
+                4 different lighting modes to choose from to fit your vibe of the night!
+            </p>
+        </div>
+        <br>
+        <div>
+            <h2>Supplies!</h2>
+            <ol>
+                <li>
+                    LED Strip (Decor/light)
+                </li>
+                <li>
+                    Arduino Uno
+                </li>
+                <li>
+                    Photoresistor
+                </li>
+                <li>
+                    IR Remote & Transmitter
+                </li>
+                <li>
+                    9V Power Supply
+                </li>
+                <li>
+                    Wires & Alligator Clips
+                </li>
+                <li>
+                    Transistor
+                </li>
+                <li>
+                    Cardboard (for enclosure)
+                </li>
+            </ol>
+        </div>
+        <br>
+        <div>
+            <h2>Timeline!</h2>
+            <ol>
+                <li>
+                    2/26 - Build Circuit & Code
+                    <dd>
+                        If code or circuit goes wrong, ask for help & complete by 2/28
+                    </dd>
+                </li>
+                <li>
+                    2/28 - Build Prototype
+                    <dd>
+                        If prototype goes wrong, use basic paper & complete by 3/1
+                    </dd>
+                </li>
+                <li>
+                    3/1 - Finish Demo Video
+                    <dd>
+                        If demo goes wrong, ask for help & complete by 3/2
+                    </dd>
+                </li>
+                <li>
+                    3/4 - Presentation & Documentation Complete
+                    <dd>
+                        If documentation goes wrong, complete by 3/8
+                    </dd>
+                </li>
+            </ol>
+        </div>
+        <br>
+        <div>
+            <h2>Technical Implementation!</h2>
+            <p>
+                To create this LED project, I used a photoresistor (for the automation aspect of the LED strips - turning on in the dark) and an IR remote and receiver (which allows for manual control of the LED strip and switching lighting modes) as the inputs. 
+                Using a transistor connected to pin 6 (which allows control of the LED strip via computer and code) as the output.
+                I connected all of the components to on a breadboard (pictured below), and began coding via Arduino.
+            </p>
+            <img src="final_scheme.jpg"
+            height="300"
+            width="587">
+            <img src="final_circuit.JPG"
+            height="300"
+            width="400">
+            <p>
+                Using a 10k resistor for the photoresistor because a voltage divider is needed to make the voltage drop measurable so that the amount of light the photoresistor receives can be determined. 
+                The current used by the LED strip (8.75 A) is less than the max current that the transistor can handle (32A), indicating that the transistor is not being pushed to its maximum capacity which makes it reliable to use with the LED strip.
+            </p>
+        </div>
+        <br>
+        <div>
+            <h2>Firmware!</h2>
+            <p>
+                One of the biggest challenges I had with the technical aspect of the LED strip included calibration, I had initially set up my transistor to turn the LED on and off based on a set value of light the photoresistor takes in.
+                This caused the LED strip to flicker and not work under different lighting environments during testing. To combat this issue, I used Arduino's callibration example code to automatically identify maximum and minimum sensor 
+                values and turn the LED strip on and off accordingly. Another issue I ran into was using the IR remote, due to the remote buttons having unique codes and the library updating the commands to these codes, I couldn't find
+                the command codes for the buttons I wanted to use. To solve this issue, I used a simple code from Circuit Tutorials on IR remotes that read each button input and tranlated each button into a command code to use and call in my own code.
+            </p>
+            <pre>
+                #include <IRremote.hpp>
+
+                int photoresistor = A1; // A1 as pin connected to photoresistor
+                int led = 6; // 6 as pin connected to led strip
+                int remote  = 9; // 9 as pin connected to IR remote 
+                    
+                // variables:
+                int command; // remote value received 
+                int sensorValue = 0;   // the sensor value
+                int sensorMin = 1023;  // minimum sensor value
+                int sensorMax = 0;     // maximum sensor value
+                    
+                #define IR_BUTTON_POWER 69 // defines code 69 as linked to power button
+                #define IR_BUTTON_1 12 // defines code 12 as linked to button q
+                #define IR_BUTTON_2 24 // defines code 24 as linked to button 2
+                #define IR_BUTTON_3 94 // defines code 94 as linked to button 3
+                #define IR_BUTTON_4 8 // defines code 8 as linked to button 4
+                    
+                void setup() {
+                    Serial.begin(9600); //starts serial count
+                    IrReceiver.begin(remote, ENABLE_LED_FEEDBACK); // start the receiver
+                    pinMode(led, OUTPUT); // defines led strip as output
+                    pinMode(photoresistor, INPUT); // defines photoresistor as input
+                    pinMode(remote, INPUT); // defines remote as input
+                    
+                    // calibrate during the first five seconds
+                    while (millis() < 5000) {
+                        sensorValue = analogRead(photoresistor);
+                        // record the maximum sensor value
+                        if (sensorValue > sensorMax) {
+                          sensorMax = sensorValue;
+                        }
+                    
+                        // record the minimum sensor value
+                        if (sensorValue < sensorMin) {
+                          sensorMin = sensorValue;
+                        }
+                      }
+                    }
+                    
+                void loop() {
+                  if (IrReceiver.decode()) {
+                    IrReceiver.resume(); // enable receiving of the next value     
+                    command = IrReceiver.decodedIRData.command; // creates command
+                    if (command == IR_BUTTON_POWER) { // when power button is pressed led turns on
+                        analogWrite(led, 255); // and turns LED strip on
+                    }
+                    // if button '4' is pressed
+                    else if (command == IR_BUTTON_4) { // when button 4 is pressed led turns off
+                      analogWrite(led, 0); // and turns LED strip off
+                    }
+                    //if button '1' is pressed led blinks
+                    else if (command == IR_BUTTON_1) {
+                      for (int i = 0; i <= 3; i++) {
+                        analogWrite(led, 255);  // turn the LED on (HIGH is the voltage level)
+                        delay(500);             // wait for a half second
+                        digitalWrite(led, 0);   // turn the LED off by making the voltage LOW
+                        delay(500); 
+                      }
+                    }
+                    //if button '2' is pressed led fades in and out
+                    else if (command == IR_BUTTON_2) {
+                        for (int i = 0; i <= 3; i++) {
+                            // fade in from min to max in increments of 5 points:
+                            for (int fadeValue = 0; fadeValue <= 255; fadeValue += 5) {
+                                // sets the value (range from 0 to 255):
+                                analogWrite(led, fadeValue);
+                                // wait for 30 milliseconds to see the dimming effect
+                                delay(30);
+                            }
+                    
+                            // fade out from max to min in increments of 5 points:
+                            for (int fadeValue = 255; fadeValue >= 0; fadeValue -= 5) {
+                                // sets the value (range from 0 to 255):
+                                analogWrite(led, fadeValue);
+                                // wait for 30 milliseconds to see the dimming effect
+                                delay(30);
+                            }
+                        }
+                    }
+                    // if button '3' is pressed led pulses and fades
+                    else if (command == IR_BUTTON_3) {
+                        for (int i = 0; i <= 3; i++) {
+                            // fade in from min to max in increments of 5 points:
+                            for (int fadeValue = 0; fadeValue <= 255; fadeValue += 5) {
+                                // sets the value (range from 0 to 255):
+                                analogWrite(led, fadeValue);
+                                // wait for 30 milliseconds to see the dimming effect
+                                delay(30);
+                            }
+                    
+                            analogWrite(led, 255);  // turn the LED on (HIGH is the voltage level)
+                            delay(100);             // wait for a second
+                            digitalWrite(led, 0);   // turn the LED off by making the voltage LOW
+                            delay(100); 
+                    
+                            // fade out from max to min in increments of 5 points:
+                            for (int fadeValue = 255; fadeValue >= 0; fadeValue -= 5) {
+                                // sets the value (range from 0 to 255):
+                                analogWrite(led, fadeValue);
+                                // wait for 30 milliseconds to see the dimming effect
+                                delay(30);
+                            }
+                    
+                              analogWrite(led, 255);  // turn the LED on (HIGH is the voltage level)
+                              delay(100);             // wait for a second
+                              digitalWrite(led, 0);   // turn the LED off by making the voltage LOW
+                              delay(100);
+                        }
+                    }
+                    
+                    if (command != IR_BUTTON_4) { // if button 4 is not pressed
+                        // read and store photoresistor values
+                        int photo = analogRead(photoresistor);
+                        // read photoresistor value and store as sensor value
+                        sensorValue = analogRead(photoresistor);
+                        // in case the sensor value is outside the range seen during calibration
+                        sensorValue = constrain(sensorValue, sensorMin, sensorMax);               
+                        // apply the calibration to the sensor reading
+                        sensorValue = map(sensorValue, sensorMin, sensorMax, 0, 255);
+                    
+                        // fade the LED using the calibrated value
+                        if (photo < sensorMin) {
+                            analogWrite(led, 255); // turns LED strip on 
+                        // if the value is less than 500 (the number is calculated based on serial count of light in room)
+                        } else {
+                            analogWrite(led, 0); // turns LED strip off.
+                        }
+                    }
+                  }
+                }
+            </pre>
         </div>
     </body>
 </html>
