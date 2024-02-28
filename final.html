@@ -132,6 +132,7 @@
                 int sensorValue = 0;   // the sensor value
                 int sensorMin = 1023;  // minimum sensor value
                 int sensorMax = 0;     // maximum sensor value
+                int currentMode = 0;   // variable to store the current mode
                     
                 #define IR_BUTTON_POWER 69 // defines code 69 as linked to power button
                 #define IR_BUTTON_1 12 // defines code 12 as linked to button q
@@ -161,97 +162,117 @@
                       }
                     }
                     
-                void loop() {
-                  if (IrReceiver.decode()) {
-                    IrReceiver.resume(); // enable receiving of the next value     
-                    command = IrReceiver.decodedIRData.command; // creates command
-                    if (command == IR_BUTTON_POWER) { // when power button is pressed led turns on
-                        analogWrite(led, 255); // and turns LED strip on
-                    }
-                    // if button '4' is pressed
-                    else if (command == IR_BUTTON_4) { // when button 4 is pressed led turns off
-                      analogWrite(led, 0); // and turns LED strip off
-                    }
-                    //if button '1' is pressed led blinks
-                    else if (command == IR_BUTTON_1) {
-                      for (int i = 0; i <= 3; i++) {
-                        analogWrite(led, 255);  // turn the LED on (HIGH is the voltage level)
-                        delay(500);             // wait for a half second
-                        digitalWrite(led, 0);   // turn the LED off by making the voltage LOW
-                        delay(500); 
-                      }
-                    }
-                    //if button '2' is pressed led fades in and out
-                    else if (command == IR_BUTTON_2) {
-                        for (int i = 0; i <= 3; i++) {
-                            // fade in from min to max in increments of 5 points:
-                            for (int fadeValue = 0; fadeValue <= 255; fadeValue += 5) {
-                                // sets the value (range from 0 to 255):
-                                analogWrite(led, fadeValue);
-                                // wait for 30 milliseconds to see the dimming effect
-                                delay(30);
+                    void loop() {
+                        if (IrReceiver.decode()) {
+                            IrReceiver.resume(); // enable receiving of the next value     
+                            command = IrReceiver.decodedIRData.command; // creates command
+                            if (command == IR_BUTTON_POWER) { // when power button is pressed led turns on
+                                analogWrite(led, 255); // and turns LED strip on
+                                currentMode = 0; // set the current mode to 0 (power on)
                             }
-                    
-                            // fade out from max to min in increments of 5 points:
-                            for (int fadeValue = 255; fadeValue >= 0; fadeValue -= 5) {
-                                // sets the value (range from 0 to 255):
-                                analogWrite(led, fadeValue);
-                                // wait for 30 milliseconds to see the dimming effect
-                                delay(30);
+                            // if button '4' is pressed
+                            else if (command == IR_BUTTON_4) { // when button 4 is pressed led turns off
+                                analogWrite(led, 0); // and turns LED strip off
+                                currentMode = 4; // set the current mode to 4 (power off)
+                            }
+                            //if button '1' is pressed led blinks
+                            else if (command == IR_BUTTON_1) {
+                                currentMode = 1; // set the current mode to 1 (blink)
+                            }
+                            //if button '2' is pressed led fades in and out
+                            else if (command == IR_BUTTON_2) {
+                                currentMode = 2; // set the current mode to 2 (fade)
+                            }
+                            // if button '3' is pressed led pulses and fades
+                            else if (command == IR_BUTTON_3) {
+                                currentMode = 3; // set the current mode to 3 (pulse)
+                            }
+                        }
+                      
+                        // execute the current mode - to switch lighting modes
+                        switch (currentMode) {
+                            case 1: // Blink
+                            
+                                analogWrite(led, 255);  // turn the LED on (HIGH is the voltage level)
+                                delay(500);             // wait for a half second
+                                digitalWrite(led, 0);   // turn the LED off by making the voltage LOW
+                                delay(500); 
+                            
+                            break;
+                            case 2: // Fade
+                            
+                                // fade in from min to max in increments of 5 points:
+                                for (int fadeValue = 0; fadeValue <= 255; fadeValue += 5) {
+                                    // sets the value (range from 0 to 255):
+                                    analogWrite(led, fadeValue);
+                                    // wait for 30 milliseconds to see the dimming effect
+                                    delay(30);
+                                }
+                      
+                                // fade out from max to min in increments of 5 points:
+                                for (int fadeValue = 255; fadeValue >= 0; fadeValue -= 5) {
+                                    // sets the value (range from 0 to 255):
+                                    analogWrite(led, fadeValue);
+                                    // wait for 30 milliseconds to see the dimming effect
+                                    delay(30);
+                                }
+                            
+                            break;
+                            case 3: // Pulse
+                            
+                                // fade in from min to max in increments of 5 points:
+                                for (int fadeValue = 0; fadeValue <= 255; fadeValue += 5) {
+                                    // sets the value (range from 0 to 255):
+                                    analogWrite(led, fadeValue);
+                                    // wait for 30 milliseconds to see the dimming effect
+                                    delay(30);
+                                }
+                        
+                                analogWrite(led, 255);  // turn the LED on (HIGH is the voltage level)
+                                delay(100);             // wait for a second
+                                digitalWrite(led, 0);   // turn the LED off by making the voltage LOW
+                                delay(100); 
+                        
+                                // fade out from max to min in increments of 5 points:
+                                for (int fadeValue = 255; fadeValue >= 0; fadeValue -= 5) {
+                                    // sets the value (range from 0 to 255):
+                                    analogWrite(led, fadeValue);
+                                    // wait for 30 milliseconds to see the dimming effect
+                                    delay(30);
+                                }
+                        
+                                analogWrite(led, 255);  // turn the LED on (HIGH is the voltage level)
+                                delay(100);             // wait for a second
+                                digitalWrite(led, 0);   // turn the LED off by making the voltage LOW
+                                delay(100);
+                            
+                            break;
+                            case 4: 
+                                // power off
+                                // do nothing, the LED is already off
+                            break;
+                            default: // Power on
+                            if (command != IR_BUTTON_4) { // if button 4 is not pressed
+                                int photo = analogRead(photoresistor); // read and store photoresistor values
+
+                                sensorValue = analogRead(photoresistor); // read photoresistor value and store as sensor value
+
+                                // in case the sensor value is outside the range seen during calibration
+                                sensorValue = constrain(sensorValue, sensorMin, sensorMax);
+
+                                // apply the calibration to the sensor reading
+                                sensorValue = map(sensorValue, sensorMin, sensorMax, 0, 255);
+
+                                // fade the LED using the calibrated value
+                                if (photo < sensorMin) {
+                                    analogWrite(led, 255); // turns LED strip on 
+                                    // if the value is less than 500 (the number is calculated based on serial count of light in room)
+                                } else {
+                                    analogWrite(led, 0); // turns LED strip off.
+                                }
                             }
                         }
                     }
-                    // if button '3' is pressed led pulses and fades
-                    else if (command == IR_BUTTON_3) {
-                        for (int i = 0; i <= 3; i++) {
-                            // fade in from min to max in increments of 5 points:
-                            for (int fadeValue = 0; fadeValue <= 255; fadeValue += 5) {
-                                // sets the value (range from 0 to 255):
-                                analogWrite(led, fadeValue);
-                                // wait for 30 milliseconds to see the dimming effect
-                                delay(30);
-                            }
-                    
-                            analogWrite(led, 255);  // turn the LED on (HIGH is the voltage level)
-                            delay(100);             // wait for a second
-                            digitalWrite(led, 0);   // turn the LED off by making the voltage LOW
-                            delay(100); 
-                    
-                            // fade out from max to min in increments of 5 points:
-                            for (int fadeValue = 255; fadeValue >= 0; fadeValue -= 5) {
-                                // sets the value (range from 0 to 255):
-                                analogWrite(led, fadeValue);
-                                // wait for 30 milliseconds to see the dimming effect
-                                delay(30);
-                            }
-                    
-                              analogWrite(led, 255);  // turn the LED on (HIGH is the voltage level)
-                              delay(100);             // wait for a second
-                              digitalWrite(led, 0);   // turn the LED off by making the voltage LOW
-                              delay(100);
-                        }
-                    }
-                    
-                    if (command != IR_BUTTON_4) { // if button 4 is not pressed
-                        // read and store photoresistor values
-                        int photo = analogRead(photoresistor);
-                        // read photoresistor value and store as sensor value
-                        sensorValue = analogRead(photoresistor);
-                        // in case the sensor value is outside the range seen during calibration
-                        sensorValue = constrain(sensorValue, sensorMin, sensorMax);               
-                        // apply the calibration to the sensor reading
-                        sensorValue = map(sensorValue, sensorMin, sensorMax, 0, 255);
-                    
-                        // fade the LED using the calibrated value
-                        if (photo < sensorMin) {
-                            analogWrite(led, 255); // turns LED strip on 
-                        // if the value is more than sensor mininmum (calculated based on serial count of light in room)
-                        } else {
-                            analogWrite(led, 0); // turns LED strip off.
-                        }
-                    }
-                  }
-                }
             </pre>
         </div>
     </body>
